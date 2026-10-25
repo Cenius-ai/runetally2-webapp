@@ -1,0 +1,13 @@
+# Local catalog data (created by `auth init` / the seed step)
+runetally.json
+*.tmp
+
+# Python
+__pycache__/
+*.py[cod]
+build/
+dist/
+*.egg-info/
+
+# Environment
+.env

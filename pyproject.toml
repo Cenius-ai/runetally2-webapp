@@ -1,0 +1,18 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "runetally2"
+version = "2.0.0"
+description = "Catalog runic inscriptions, sort by stave width, score pigment wear (standard library only)."
+readme = "README.md"
+requires-python = ">=3.9"
+dependencies = []
+license = { text = "MIT" }
+
+[project.scripts]
+runetally = "runetally:main"
+
+[tool.setuptools]
+py-modules = ["runetally"]

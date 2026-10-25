@@ -1,0 +1,6 @@
+# RuneTally2 has no third-party runtime dependencies: it is standard library only
+# (Python 3.9+). This file exists so `pip install -r requirements.txt` is a
+# supported, no-op step; there is nothing to download and nothing to pin.
+#
+# Test tooling is likewise optional: `python3 -m unittest discover -s tests`
+# runs the suite with the standard library, and pytest collects it too if present.
