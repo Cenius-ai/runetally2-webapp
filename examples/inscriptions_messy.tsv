@@ -1,0 +1,6 @@
+source_id	name	site	period	stave_width_mm	pigment_wear	notes
+HER-11	Hærulf stone	Haderslev, Denmark	Viking Age (c. 975)	7.0	2	Short memorial formula; stable pigment along the whole line
+FRA-12	Fragment from Frösö	Sigtuna, Sweden	Viking Age (c. 1050)	3.2	6	Wear score of 6 is out of range, so this row is skipped
+	No source id, still imported	Uppsala, Sweden	Medieval (c. 1200)	5.0	1	Blank source_id is allowed; no mapping line is printed
+BRO-13	Broken row	Jutland, Denmark
+TIB-14	Tibble fragment	Uppland, Sweden	Viking Age (c. 1025)	-3	2	Negative width is rejected, so this row is skipped too

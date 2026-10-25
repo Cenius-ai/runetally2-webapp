@@ -1,0 +1,256 @@
+RuneTally2 - demo transcript
+============================
+
+Captured by running:  bash demo.sh
+
+The script works on a throwaway catalog under $TMPDIR, so every command below can be
+replayed line by line (replace $TMPDIR/runetally-demo with any path you like). The demo
+account is: cenius / cenius
+
+Every command in the run exits 0, and it ends with DEMO OK. Temp paths and timestamps
+differ between runs; the catalogue content does not.
+
+-------------------------------------------------------------------------------
+
+RuneTally2 demo - catalog file: $TMPDIR/runetally-demo/runetally-demo.json
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json --help
+usage: runetally [-h] [--file PATH] [--no-color] [--version] <command> ...
+
+RuneTally2 - catalog runic inscriptions, sort by stave width, score pigment wear.
+Offline, one JSON catalog, guarded by a local operator passphrase.
+
+positional arguments:
+  <command>
+    auth       create or inspect the operator passphrase
+    add        add one inscription
+    list       print the fixed-width catalog table
+    show       print one inscription with full fields
+    edit       update named fields of one inscription
+    delete     delete one inscription (requires --yes)
+    import     import inscriptions from a TSV file
+    bands      print the stave band rubric and the wear scale
+
+options:
+  -h, --help   show this help message and exit
+  --file PATH  catalog JSON file (default: ./runetally.json; env
+               RUNETALLY_FILE)
+  --no-color   never emit ANSI colour
+  --version    show program's version number and exit
+
+Stave width bands (mm):
+  narrow   width <= 4.0
+  medium   4.0 < width <= 8.0
+  broad    width > 8.0
+  unset    no width recorded (null)
+
+Pigment wear: 0 pristine, 1 slight, 2 light, 3 moderate, 4 heavy, 5 lost; null = unset.
+
+Passphrase: RUNETALLY_PASSPHRASE for non-interactive use (demo account: cenius / cenius).
+
+Examples:
+  runetally auth init
+  runetally add --name "Broby stone" --site Broby --period "Viking Age" --stave-width 3.2 --wear 4
+  runetally list --sort stave-band --band narrow
+  runetally import examples/inscriptions.tsv
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json auth init
+initialized catalog $TMPDIR/runetally-demo/runetally-demo.json for operator 'cenius'
+passphrase stored as PBKDF2-SHA256 (240000 iterations) + random salt
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json auth status
+initialized: operator 'cenius', 0 inscriptions
+file: $TMPDIR/runetally-demo/runetally-demo.json
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json bands
+Stave width bands (mm):
+  narrow   width <= 4.0
+  medium   4.0 < width <= 8.0
+  broad    width > 8.0
+  unset    no width recorded (null)
+
+Pigment wear scale (0-5):
+  0  pristine
+  1  slight
+  2  light
+  3  moderate
+  4  heavy
+  5  lost
+  unset  wear not scored (null)
+
+filter with: runetally list --band narrow   |   runetally list --wear 4
+sort with:   runetally list --sort stave-band --order asc
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json add --name Broby stone --site Broby --period Viking Age --stave-width 3.2 --wear 4
+added inscription 1: Broby stone
+  band: narrow  wear: heavy
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json add --name Noleby stone --site Västergötland, Sweden --period Migration Period (c. 600) --stave-width 11.5 --wear 3 --notes Bound staves; pigment survives in the deep channels
+added inscription 2: Noleby stone
+  band: broad  wear: moderate
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json add --name Vadstena fragment --site Östergötland, Sweden --period Medieval (c. 1200) --stave-width 4.05 --wear 2
+added inscription 3: Vadstena fragment
+  band: medium  wear: light
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json add --name Hovgården rune block --site Adelsö, Sweden --period Viking Age (c. 1050) --stave-width 8.01 --wear 5 --notes Pigment completely lost; width measured at mid-stave
+added inscription 4: Hovgården rune block
+  band: broad  wear: lost
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json add --name Sigtuna fragment --site Sigtuna, Sweden --period Medieval (c. 1150) --notes Width not recorded in the field notebook
+added inscription 5: Sigtuna fragment
+  band: unset  wear: unset
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json list
+   ID  NAME                              SITE                  PERIOD                   STAVE  WEAR 
+----------------------------------------------------------------------------------------------------
+    1  Broby stone                       Broby                 Viking Age             3.2 nar  4 hea
+    2  Noleby stone                      Västergötland, Sw...  Migration Period ...  11.5 bro  3 mod
+    3  Vadstena fragment                 Östergötland, Sweden  Medieval (c. 1200)    4.05 med  2 lig
+    4  Hovgården rune block              Adelsö, Sweden        Viking Age (c. 1050)  8.01 bro  5 los
+    5  Sigtuna fragment                  Sigtuna, Sweden       Medieval (c. 1150)       - uns  - uns
+5 inscriptions
+bands: nar = narrow (<= 4.0)  med = medium (> 4.0, <= 8.0)  bro = broad (> 8.0)  uns = unset
+wear: 0 pri 1 sli 2 lig 3 mod 4 hea 5 los  (full labels: runetally show <id>)
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json list --sort stave-band
+   ID  NAME                              SITE                  PERIOD                   STAVE  WEAR 
+----------------------------------------------------------------------------------------------------
+    1  Broby stone                       Broby                 Viking Age             3.2 nar  4 hea
+    3  Vadstena fragment                 Östergötland, Sweden  Medieval (c. 1200)    4.05 med  2 lig
+    4  Hovgården rune block              Adelsö, Sweden        Viking Age (c. 1050)  8.01 bro  5 los
+    2  Noleby stone                      Västergötland, Sw...  Migration Period ...  11.5 bro  3 mod
+    5  Sigtuna fragment                  Sigtuna, Sweden       Medieval (c. 1150)       - uns  - uns
+5 inscriptions
+bands: nar = narrow (<= 4.0)  med = medium (> 4.0, <= 8.0)  bro = broad (> 8.0)  uns = unset
+wear: 0 pri 1 sli 2 lig 3 mod 4 hea 5 los  (full labels: runetally show <id>)
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json list --sort stave-width --order desc
+   ID  NAME                              SITE                  PERIOD                   STAVE  WEAR 
+----------------------------------------------------------------------------------------------------
+    2  Noleby stone                      Västergötland, Sw...  Migration Period ...  11.5 bro  3 mod
+    4  Hovgården rune block              Adelsö, Sweden        Viking Age (c. 1050)  8.01 bro  5 los
+    3  Vadstena fragment                 Östergötland, Sweden  Medieval (c. 1200)    4.05 med  2 lig
+    1  Broby stone                       Broby                 Viking Age             3.2 nar  4 hea
+    5  Sigtuna fragment                  Sigtuna, Sweden       Medieval (c. 1150)       - uns  - uns
+5 inscriptions
+bands: nar = narrow (<= 4.0)  med = medium (> 4.0, <= 8.0)  bro = broad (> 8.0)  uns = unset
+wear: 0 pri 1 sli 2 lig 3 mod 4 hea 5 los  (full labels: runetally show <id>)
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json list --band broad
+   ID  NAME                              SITE                  PERIOD                   STAVE  WEAR 
+----------------------------------------------------------------------------------------------------
+    2  Noleby stone                      Västergötland, Sw...  Migration Period ...  11.5 bro  3 mod
+    4  Hovgården rune block              Adelsö, Sweden        Viking Age (c. 1050)  8.01 bro  5 los
+2 inscriptions
+bands: nar = narrow (<= 4.0)  med = medium (> 4.0, <= 8.0)  bro = broad (> 8.0)  uns = unset
+wear: 0 pri 1 sli 2 lig 3 mod 4 hea 5 los  (full labels: runetally show <id>)
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json list --wear 5
+   ID  NAME                              SITE                  PERIOD                   STAVE  WEAR 
+----------------------------------------------------------------------------------------------------
+    4  Hovgården rune block              Adelsö, Sweden        Viking Age (c. 1050)  8.01 bro  5 los
+1 inscription
+bands: nar = narrow (<= 4.0)  med = medium (> 4.0, <= 8.0)  bro = broad (> 8.0)  uns = unset
+wear: 0 pri 1 sli 2 lig 3 mod 4 hea 5 los  (full labels: runetally show <id>)
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json show 1
+inscription 1
+  id           : 1
+  name         : Broby stone
+  site         : Broby
+  period       : Viking Age
+  stave width  : 3.2 mm (narrow)
+  pigment wear : 4 (heavy)
+  notes        : -
+  created at   : 2026-10-25T20:25:27Z
+  updated at   : 2026-10-25T20:25:27Z
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json show 5
+inscription 5
+  id           : 5
+  name         : Sigtuna fragment
+  site         : Sigtuna, Sweden
+  period       : Medieval (c. 1150)
+  stave width  : - (unset)
+  pigment wear : - (unset)
+  notes        : Width not recorded in the field notebook
+  created at   : 2026-10-25T20:25:28Z
+  updated at   : 2026-10-25T20:25:28Z
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json edit 3 --wear 0 --stave-width 6.5
+updated inscription 3: wear, stave width
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json show 3
+inscription 3
+  id           : 3
+  name         : Vadstena fragment
+  site         : Östergötland, Sweden
+  period       : Medieval (c. 1200)
+  stave width  : 6.5 mm (medium)
+  pigment wear : 0 (pristine)
+  notes        : -
+  created at   : 2026-10-25T20:25:28Z
+  updated at   : 2026-10-25T20:25:32Z
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json import examples/inscriptions.tsv
+imported 10, skipped 0
+  source_id RÖK-01 -> id 6
+  source_id JEL-02 -> id 7
+  source_id KYL-03 -> id 8
+  source_id EGG-04 -> id 9
+  source_id BJO-05 -> id 10
+  source_id STE-06 -> id 11
+  source_id MOJ-07 -> id 12
+  source_id SPA-08 -> id 13
+  source_id KUL-09 -> id 14
+  source_id EIN-10 -> id 15
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json import examples/inscriptions_messy.tsv
+imported 2, skipped 3
+  skipped line 3: pigment wear must be 0-5
+  skipped line 5: expected 7 columns, got 3
+  skipped line 6: stave width must be a positive number
+  source_id HER-11 -> id 16
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json list --sort wear
+   ID  NAME                              SITE                  PERIOD                   STAVE  WEAR 
+----------------------------------------------------------------------------------------------------
+    3  Vadstena fragment                 Östergötland, Sweden  Medieval (c. 1200)     6.5 med  0 pri
+   12  Möjbro stone                      Uppland, Sweden       Migration Period ...   7.4 med  0 pri
+    9  Eggja stone                       Sogn og Fjordane,...  Migration Period ...   5.5 med  1 sli
+   17  No source id, still imported      Uppsala, Sweden       Medieval (c. 1200)     5.0 med  1 sli
+    8  Kylver stone                      Gotland, Sweden       Migration Period ...   4.0 nar  2 lig
+   13  Sparlösa stone                    Västergötland, Sw...  Viking Age (c. 800)    9.8 bro  2 lig
+   16  Hærulf stone                      Haderslev, Denmark    Viking Age (c. 975)    7.0 med  2 lig
+    2  Noleby stone                      Västergötland, Sw...  Migration Period ...  11.5 bro  3 mod
+    6  Rök runestone                     Östergötland, Sweden  Viking Age (c. 800)   11.5 bro  3 mod
+   11  Stentoften stone                  Blekinge, Sweden      Migration Period ...   6.2 med  3 mod
+    1  Broby stone                       Broby                 Viking Age             3.2 nar  4 hea
+    7  Jelling stone                     Jutland, Denmark      Viking Age (c. 965)   12.0 bro  4 hea
+   14  Kuli stone                        Møre og Romsdal, ...  Viking Age (c. 1000)   3.5 nar  4 hea
+    4  Hovgården rune block              Adelsö, Sweden        Viking Age (c. 1050)  8.01 bro  5 los
+   10  Björketorp stone                  Blekinge, Sweden      Migration Period ...   8.0 med  5 los
+    5  Sigtuna fragment                  Sigtuna, Sweden       Medieval (c. 1150)       - uns  - uns
+   15  Einang stone                      Oppland, Norway       Migration Period ...   4.0 nar  - uns
+17 inscriptions
+bands: nar = narrow (<= 4.0)  med = medium (> 4.0, <= 8.0)  bro = broad (> 8.0)  uns = unset
+wear: 0 pri 1 sli 2 lig 3 mod 4 hea 5 los  (full labels: runetally show <id>)
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json delete 5 --yes
+deleted inscription 5: Sigtuna fragment
+next id to assign: 18 (ids are never reused)
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json list --band unset
+No inscriptions match --band unset - all 16 inscriptions are hidden by filters.
+Clear the filters to see the whole catalog.
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json add --name After delete --wear 1
+added inscription 18: After delete
+  band: unset  wear: slight
+
+$ python3 runetally.py --file $TMPDIR/runetally-demo/runetally-demo.json auth status
+initialized: operator 'cenius', 17 inscriptions
+file: $TMPDIR/runetally-demo/runetally-demo.json
+
+DEMO OK
