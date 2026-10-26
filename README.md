@@ -102,7 +102,7 @@ _Full guide: [`USAGE.md`](USAGE.md)_
 
 ## Architecture
 
-Full-stack app project, delivered as a complete runnable codebase (27 files). Top-level layout: `examples/`, `tests/`. The setup script (`install.sh`) installs runtime dependencies and loads a starter dataset so the app is immediately usable. See [`INSTALL.md`](INSTALL.md) for complete setup instructions.
+Full-stack app project, delivered as a complete runnable codebase (17 files). Top-level layout: `examples/`, `tests/`. The setup script (`install.sh`) installs runtime dependencies and loads a starter dataset so the app is immediately usable. See [`INSTALL.md`](INSTALL.md) for complete setup instructions.
 
 ## FAQ
 
